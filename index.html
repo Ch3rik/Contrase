@@ -65,9 +65,17 @@ def home():
                 background: #128C7E;
                 padding: 20px;
                 border-radius: 10px;
-                max-width: 400px;
+                max-width: 450px;
                 margin: auto;
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+                text-align: left;
+            }
+            h1 {
+                background-color: #25D366;
+                color: #fff;
+                padding: 15px;
+                text-align: center;
+                border-radius: 5px;
             }
             button {
                 background-color: #25D366;
@@ -76,6 +84,8 @@ def home():
                 padding: 10px 20px;
                 border-radius: 5px;
                 cursor: pointer;
+                width: 100%;
+                font-size: 16px;
             }
             button:hover {
                 background-color: #20B954;
@@ -83,12 +93,15 @@ def home():
             .config label {
                 display: block;
                 margin-top: 10px;
+                font-weight: bold;
             }
             #result {
                 margin-top: 15px;
-                padding: 10px;
-                background: rgba(0, 0, 0, 0.2);
+                padding: 15px;
+                background: #0e4b41;
                 border-radius: 5px;
+                color: #fff;
+                word-wrap: break-word;
             }
         </style>
         <script>
@@ -108,7 +121,7 @@ def home():
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('password').innerText = data.password;
-                    document.getElementById('security').innerText = `Nivel ${data.security_analysis.score}/4`;
+                    document.getElementById('security').innerText = `Nivel de seguridad: ${data.security_analysis.score}/4`;
                 });
             }
         </script>
@@ -119,11 +132,11 @@ def home():
             <div class="config">
                 <label for="length">Longitud:</label>
                 <input type="number" id="length" value="32" min="8" max="64">
-                <label><input type="checkbox" id="use_symbols" checked> Símbolos</label>
-                <label><input type="checkbox" id="use_numbers" checked> Números</label>
-                <label><input type="checkbox" id="use_uppercase" checked> Mayúsculas</label>
+                <label><input type="checkbox" id="use_symbols" checked> Incluir símbolos</label>
+                <label><input type="checkbox" id="use_numbers" checked> Incluir números</label>
+                <label><input type="checkbox" id="use_uppercase" checked> Incluir mayúsculas</label>
             </div>
-            <button onclick="generatePassword()">Generar</button>
+            <button onclick="generatePassword()">Generar Contraseña</button>
             <div id="result">
                 <p><strong>Contraseña:</strong> <span id="password"></span></p>
                 <p><strong>Seguridad:</strong> <span id="security"></span></p>
