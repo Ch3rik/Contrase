@@ -54,7 +54,7 @@ def home():
         <title>Generador de Contraseñas Seguras</title>
         <style>
             body {
-                background-color: #075E54;
+                background-color: #004D40;
                 color: white;
                 font-family: Arial, sans-serif;
                 text-align: center;
@@ -62,23 +62,23 @@ def home():
                 padding: 20px;
             }
             .container {
-                background: #128C7E;
+                background: #00796B;
                 padding: 20px;
                 border-radius: 10px;
                 max-width: 450px;
                 margin: auto;
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-                text-align: left;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+                text-align: center;
             }
             h1 {
-                background-color: #25D366;
+                background-color: #26A69A;
                 color: #fff;
                 padding: 15px;
                 text-align: center;
                 border-radius: 5px;
             }
             button {
-                background-color: #25D366;
+                background-color: #26A69A;
                 color: white;
                 border: none;
                 padding: 10px 20px;
@@ -88,7 +88,7 @@ def home():
                 font-size: 16px;
             }
             button:hover {
-                background-color: #20B954;
+                background-color: #1E887E;
             }
             .config label {
                 display: block;
@@ -98,10 +98,17 @@ def home():
             #result {
                 margin-top: 15px;
                 padding: 15px;
-                background: #0e4b41;
+                background: #004D40;
                 border-radius: 5px;
                 color: #fff;
                 word-wrap: break-word;
+            }
+            textarea {
+                width: 100%;
+                padding: 10px;
+                margin-top: 10px;
+                font-size: 16px;
+                resize: none;
             }
         </style>
         <script>
@@ -120,15 +127,21 @@ def home():
                 })
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById('password').innerText = data.password;
+                    document.getElementById('password').value = data.password;
                     document.getElementById('security').innerText = `Nivel de seguridad: ${data.security_analysis.score}/4`;
                 });
+            }
+            function copyToClipboard() {
+                let passwordField = document.getElementById('password');
+                passwordField.select();
+                document.execCommand('copy');
+                alert('Contraseña copiada al portapapeles');
             }
         </script>
     </head>
     <body>
         <div class="container">
-            <h1>🔒 Generador de Contraseñas</h1>
+            <h1>🔒 Contraseñas Súper Seguras</h1>
             <div class="config">
                 <label for="length">Longitud:</label>
                 <input type="number" id="length" value="32" min="8" max="64">
@@ -138,10 +151,15 @@ def home():
             </div>
             <button onclick="generatePassword()">Generar Contraseña</button>
             <div id="result">
-                <p><strong>Contraseña:</strong> <span id="password"></span></p>
+                <p><strong>Contraseña:</strong></p>
+                <textarea id="password" readonly rows="2"></textarea>
+                <button onclick="copyToClipboard()">Copiar</button>
                 <p><strong>Seguridad:</strong> <span id="security"></span></p>
             </div>
         </div>
+    <footer style='margin-top: 20px; padding: 10px; background: #00332E; color: white; text-align: center;'>
+            Se armó esto todo chingón y con un chingo de love ❤️
+        </footer>
     </body>
     </html>
     '''
