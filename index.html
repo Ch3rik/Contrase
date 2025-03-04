@@ -1,0 +1,60 @@
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+import secrets
+import string
+import bcrypt
+from argon2 import PasswordHasher
+import zxcvbn
+
+app = Flask(__name__)
+CORS(app)
+ph = PasswordHasher()
+
+def generate_password(length=32, use_symbols=True, use_numbers=True, use_uppercase=True):
+    characters = string.ascii_lowercase
+    if use_uppercase:
+        characters += string.ascii_uppercase
+    if use_numbers:
+        characters += string.digits
+    if use_symbols:
+        characters += string.punctuation
+    
+    password = ''.join(secrets.choice(characters) for _ in range(length))
+    return password
+
+def hash_password(password, method='bcrypt'):
+    if method == 'bcrypt':
+        return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+    elif method == 'argon2':
+        return ph.hash(password)
+    return None
+
+def check_password_strength(password):
+    strength = zxcvbn.zxcvbn(password)
+    return {
+        'score': strength['score'],
+        'feedback': strength['feedback'],
+        'guesses': strength['guesses'],
+        'crack_time': strength['crack_times_display']
+    }
+
+@app.route('/generate', methods=['POST'])
+def generate():
+    data = request.json
+    length = data.get('length', 32)
+    use_symbols = data.get('use_symbols', True)
+    use_numbers = data.get('use_numbers', True)
+    use_uppercase = data.get('use_uppercase', True)
+    
+    password = generate_password(length, use_symbols, use_numbers, use_uppercase)
+    hashed_password = hash_password(password)
+    security_analysis = check_password_strength(password)
+    
+    return jsonify({
+        'password': password,
+        'hashed': hashed_password,
+        'security_analysis': security_analysis
+    })
+
+if __name__ == '__main__':
+    app.run(debug=True)
