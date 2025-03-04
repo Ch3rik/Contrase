@@ -4,10 +4,15 @@ import secrets
 import string
 import bcrypt
 from argon2 import PasswordHasher
-import zxcvbn
+try:
+    from zxcvbn import zxcvbn
+except ImportError:
+    import os
+    os.system('pip install zxcvbn-python')
+    from zxcvbn import zxcvbn
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 ph = PasswordHasher()
 
 def generate_password(length=32, use_symbols=True, use_numbers=True, use_uppercase=True):
@@ -30,7 +35,7 @@ def hash_password(password, method='bcrypt'):
     return None
 
 def check_password_strength(password):
-    strength = zxcvbn.zxcvbn(password)
+    strength = zxcvbn(password)
     return {
         'score': strength['score'],
         'feedback': strength['feedback'],
@@ -147,4 +152,4 @@ def generate():
     })
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
