@@ -38,6 +38,96 @@ def check_password_strength(password):
         'crack_time': strength['crack_times_display']
     }
 
+@app.route('/')
+def home():
+    return '''
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Generador de Contraseñas Seguras</title>
+        <style>
+            body {
+                background-color: #075E54;
+                color: white;
+                font-family: Arial, sans-serif;
+                text-align: center;
+                margin: 0;
+                padding: 20px;
+            }
+            .container {
+                background: #128C7E;
+                padding: 20px;
+                border-radius: 10px;
+                max-width: 400px;
+                margin: auto;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            }
+            button {
+                background-color: #25D366;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+            button:hover {
+                background-color: #20B954;
+            }
+            .config label {
+                display: block;
+                margin-top: 10px;
+            }
+            #result {
+                margin-top: 15px;
+                padding: 10px;
+                background: rgba(0, 0, 0, 0.2);
+                border-radius: 5px;
+            }
+        </style>
+        <script>
+            function generatePassword() {
+                let data = {
+                    length: document.getElementById('length').value,
+                    use_symbols: document.getElementById('use_symbols').checked,
+                    use_numbers: document.getElementById('use_numbers').checked,
+                    use_uppercase: document.getElementById('use_uppercase').checked
+                };
+
+                fetch('/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('password').innerText = data.password;
+                    document.getElementById('security').innerText = `Nivel ${data.security_analysis.score}/4`;
+                });
+            }
+        </script>
+    </head>
+    <body>
+        <div class="container">
+            <h1>🔒 Generador de Contraseñas</h1>
+            <div class="config">
+                <label for="length">Longitud:</label>
+                <input type="number" id="length" value="32" min="8" max="64">
+                <label><input type="checkbox" id="use_symbols" checked> Símbolos</label>
+                <label><input type="checkbox" id="use_numbers" checked> Números</label>
+                <label><input type="checkbox" id="use_uppercase" checked> Mayúsculas</label>
+            </div>
+            <button onclick="generatePassword()">Generar</button>
+            <div id="result">
+                <p><strong>Contraseña:</strong> <span id="password"></span></p>
+                <p><strong>Seguridad:</strong> <span id="security"></span></p>
+            </div>
+        </div>
+    </body>
+    </html>
+    '''
+
 @app.route('/generate', methods=['POST'])
 def generate():
     data = request.json
